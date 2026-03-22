@@ -1,24 +1,15 @@
 export function initFiltering(elements) {
    
-    const updateIndexes = (indexes) => {
-        Object.keys(indexes).forEach(elementName => {
-            elements[elementName].innerHTML = '';
-            
-            // Опция "Все"
-            const allOption = document.createElement('option');
-            allOption.value = '';
-            allOption.textContent = 'Все';
-            elements[elementName].appendChild(allOption);
-            
-            // Опции из индекса
-            Object.values(indexes[elementName]).forEach(name => {
-                const option = document.createElement('option');
-                option.value = name;
-                option.textContent = name;
-                elements[elementName].appendChild(option);
-            });
-        });
-    };
+   const updateIndexes = (elements, indexes) => {
+        Object.keys(indexes).forEach((elementName) => {
+            elements[elementName].append(...Object.values(indexes[elementName]).map(name => {
+                const el = document.createElement('option');
+                el.textContent = name;
+                el.value = name;
+                return el;
+            }))
+        })
+    }
 
    
     const applyFiltering = (query, state, action) => {
@@ -27,6 +18,11 @@ export function initFiltering(elements) {
             const field = action.dataset.field;
             if (field && state[field] !== undefined) {
                 state[field] = '';
+
+                const input = action.parentElement.querySelector('input');
+                if (input) {
+                    input.value = '';
+                }
             }
         }
         
